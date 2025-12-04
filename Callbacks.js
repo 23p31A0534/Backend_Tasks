@@ -13,6 +13,7 @@ function getuserBill(Totals){
 getUserdeatails("123",function(names){
     getUserName(names,function(bill){
         getuserBill(bill)
+        console.log("Total bill")
     })
 })
 
