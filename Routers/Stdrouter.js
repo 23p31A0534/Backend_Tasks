@@ -1,8 +1,9 @@
 const express = require('express');
 const route=express.Router();
 const Stdcontrollers=require("../Controllers/Stdcontrollers.js")
-const multer= require('multer');
+const multer= require('multer');               
 const path=require('path');
+const nodemailer=require('nodemailer')
 const Storage=multer.diskStorage({
     destination:function(req,file,cb){
         cb(null,"uploads")
@@ -28,11 +29,37 @@ const Uplaod=multer({
         fileSize:1024*1024*2
     }
 })
+nodemailer.createTransport({
+    service:"Mail",
+    auth:{
+        user:"mslahari05@gmail.com",
+        pass:"qwzm douy wniu svpm"
+
+    }
+})
+const SendMail = async(req,res) => {
+    try{
+        const result = await TransportInfo.sendMail({
+            from:"mslahari05@gmail.com",
+            to:"charmii2506@gmail.com",
+            subject:"testing-subject",
+            html:"",
+            text:"Hello Universe",
+            
+        })
+        console.log(result)
+        return res.status(200).json(result)
+    }
+    catch(err){
+        return res.status(500).json(err)
+    }
+}
 // import {getStudentsDetails,  addStudents ,getStudentsById,getStudentsDetailsWithFilters, updateStudents,updateStudentsStatus} from "../Controllers/Stdcontrollers.js";
 route.post('/add-data',Stdcontrollers.AddData);
 route.get('/get-data/:email',Stdcontrollers.GetData);
 route.put('update/:id',Stdcontrollers.UpdateData)
 route.post('file-upload',Uplaod.array('file',3),Stdcontrollers.UploadFile)
+route.get('send-mail',SendMail)
 // router.get('/get-users',getStudentsDetails);
 // router.post('/add-users',addStudents);
 // router.get('/get-student-ById/:userid',getStudentsById)
@@ -41,3 +68,4 @@ route.post('file-upload',Uplaod.array('file',3),Stdcontrollers.UploadFile)
 // router.put('/update-students-status',updateStudentsStatus)
 module.exports=route;
  
+
