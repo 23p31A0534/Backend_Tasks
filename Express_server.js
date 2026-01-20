@@ -1,13 +1,17 @@
-import express from 'express';
-import stdrouter from './Routers/Stdrouter.js';
-import cors from 'cors';
-import mongoose  from 'mongoose';
+const express=require('express')
 const app=express();
+
+const cors=require('cors')
+const mongoose=require('mongoose')
+const Stdrouter=require("./Routers/Stdrouter.js")
 app.use(express.json());
 app.use(cors());
 mongoose.connect("mongodb+srv://mslahari05_db_user:Lahari27@firstcluster.343edhl.mongodb.net/").then(() => console.log("db connected"))
 .catch((error) => console.log(error));
-app.use('/',stdrouter); 
+app.use('/',Stdrouter);
+
+
+app.use(express.static(path.join(__dirname,"uploads")))
 
 app.get('/users',(req,res)=>{
     res.send("This is also backend");
