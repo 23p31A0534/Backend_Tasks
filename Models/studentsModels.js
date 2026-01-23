@@ -1,18 +1,21 @@
-import mongoose from "mongoose";
-
+const mongoose=require('mongoose')
 const studentSchema = new mongoose.Schema({
-    stdName: {
-        type: String
+    name: {
+        type: String,
+        required:true
     },
-    stdRoll : {
-        type: String
+    email : {
+        type: String,
+        required:true
     },
-    stdPhone: {
-        type : Number
+    phone: {
+        type : Number,
+        required:true
     },
-    status:{
-        type:Boolean
+    age:{
+        type:Number
+
     }
 });
-const student = mongoose.model("student", studentSchema);
-export default student;
+module.exports= mongoose.model("form", studentSchema);
+

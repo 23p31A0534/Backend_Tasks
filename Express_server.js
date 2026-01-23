@@ -1,6 +1,6 @@
 const express=require('express')
 const app=express();
-
+const path=require('path');
 const cors=require('cors')
 const mongoose=require('mongoose')
 const Stdrouter=require("./Routers/Stdrouter.js")
@@ -10,6 +10,15 @@ mongoose.connect("mongodb+srv://mslahari05_db_user:Lahari27@firstcluster.343edhl
 .catch((error) => console.log(error));
 app.use('/',Stdrouter);
 
+
+
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+    credentials: true         
+  })
+);
 
 app.use(express.static(path.join(__dirname,"uploads")))
 

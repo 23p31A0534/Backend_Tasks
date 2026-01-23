@@ -1,64 +1,103 @@
-const express=require('express');
-const studentSchema=require('../Models/studentsModels');
+const studentSchema = require('../Models/studentsModels');
+const Bcrypt = require('bcrypt');
 
-const AddData= async(req,res)=>{
-    try{
-       console.log(req.body);
-       const {name,email,phone,age}=req.body;
-       if(!name||!email||!phone||!age){
-        return req.status(400).json("All fields are required");
+const AddData = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { name, email, phone, age } = req.body;
 
-       }
-       else{
-        const result=await studentSchema.create(req.body);
+        if (!name || !email || !phone || !age) {
+            return res.status(400).json("All fields are required");
+        }
+
+        const result = await studentSchema.create(req.body);
         return res.status(201).json("Data is inserted");
-       }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error.message);
     }
-    catch(error){
-        return res.status(500).json(err);
-    }
-}
-const GetData = async (req, res) => {
-  try {
-    const result = await studentSchema.findOne({name:"Ganga"});
-
-    if (!result) {
-      return res.status(404).json({ message: "Student not found" });
-    }
-
-    res.status(200).json(result);
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
 };
-const UpdateData=async(req,res)=>{
-    try{
-        const result=await studentSchema.findByIdAndUpdate(req.params.id,req.body)
+
+const GetData = async (req, res) => {
+    try {
+        const result = await studentSchema.findOne({ name: "Ganga" });
+
+        if (!result) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const UpdateData = async (req, res) => {
+    try {
+        const result = await studentSchema.findByIdAndUpdate(req.params.id, req.body, { new: true });
         console.log(result);
-        return res.status(200).json("data updated")
+        return res.status(200).json("Data updated");
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error.message);
     }
-    catch(error){
-        return re.status(500).json(err);
+};
+
+const UploadFile = async (req, res) => {
+    try {
+        console.log(req.files);
+        return res.status(200).json(req.files);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err.message);
     }
-}
+};
+
+const Encrypting = async (req, res) => {
+    try {
+        const encode = await Bcrypt.hash(req.body.password, 10);
+        return res.status(200).json({ hash: encode });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: err.message });
+    }
+};
 
 
-const UploadFile = async(req,res) => {
-    try{
-        console.log(req.files)
-        return res.status(200).json(req.files)
+const VerifyEncryption = async (req, res) => {
+    try {
+        const encrypted = "$2b$10$Q0MtXXQ7DyaOnjbFQWW30u/DyLm2yyJXxeLWsNIGTBN55A.my2vdK";
+        const result = await Bcrypt.compare(req.body.password, encrypted);
+        return res.status(200).json({ match: result });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err.message);
     }
-    catch(err){
-        console.log(err)
-        return res.status(500).json(err)
-    }
-}
-exports.AddData=AddData
-exports.GetData=GetData
-exports.UpdateData=UpdateData
-exports.UploadFile=UploadFile
+};
+
+
+// const VerifyEncryption= async(req,res)=>{
+//     try{
+//         const encrypted="$2b$10$Q0MtXXQ7DyaOnjbFQWW30u/DyLm2yyJXxeLWsNIGTBN55A.my2vdK";
+//         const result=await Bcrypt.compare(req.body.password,encrypted);
+//         return res.status(200).json({hash:result});
+
+//     }
+//     catch(err){
+//         console.log(err);
+//         res.status(500).json(err)
+//     }
+// }
+module.exports = {
+    AddData,
+    GetData,
+    UpdateData,
+    UploadFile,
+    Encrypting,
+    VerifyEncryption
+};
+
 // const getStudentsDetails = async(req, res) => {
 //     try{
 //             const mydata = await student.find();
@@ -142,25 +181,6 @@ exports.UploadFile=UploadFile
 // }
 //db.deleteOne,db.FindOneAndDelete(),db.FindByIdAndDelete({_id:id}),db.delete({})
 // export {getStudentsDetails, addStudents,getStudentsById,getStudentsDetailsWithFilters,updateStudents,updateStudentsStatus};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // const getStudents=(req,res)=>{
 //     let stdData={name:"Lahari",rollno:"555"}
 //     res.status(200).json({Data:stdData});
